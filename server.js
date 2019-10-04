@@ -13,6 +13,36 @@ app.get("/", (req, res) => {
   res.sendFile("index.html", { root: __dirname });
 });
 
+app.get("/api/votes", (req, res) => {
+  const ids = bloggersIds.join(",");
+
+  https
+    .get(
+      "https://testnet1.wavesnodes.com/addresses/data/3NCNoPsUGinvErayNYFzNfDYSbDA8gFzA3d",
+      apiRes => {
+        apiRes.setEncoding("utf8");
+
+        // wait for data
+        apiRes.on("data", function(chunk) {
+          res.write(chunk);
+        });
+
+        apiRes.on("close", function() {
+          res.end();
+        });
+
+        apiRes.on("end", function() {
+          res.end();
+        });
+      }
+    )
+    .on("error", function(e) {
+      console.log(e.message);
+      res.writeHead(500);
+      res.end();
+    });
+});
+
 app.get("/api/bloggers", (req, res) => {
   const ids = bloggersIds.join(",");
 
@@ -22,12 +52,9 @@ app.get("/api/bloggers", (req, res) => {
       apiRes => {
         apiRes.setEncoding("utf8");
 
-        let data;
-
         // wait for data
         apiRes.on("data", function(chunk) {
           res.write(chunk);
-          data += chunk;
         });
 
         apiRes.on("close", function() {

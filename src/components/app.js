@@ -5,7 +5,8 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      bloggersList: []
+      bloggersList: [],
+      votes: {}
     };
     this.authFunc = this.authFunc.bind(this);
   }
@@ -15,6 +16,21 @@ class App extends React.Component {
       .then(res => res.json())
       .then(body => {
         this.setState({ bloggersList: body.items });
+      });
+
+    fetch(`/api/votes`)
+      .then(res => res.json())
+      .then(body => {
+        const votes = body.reduce(function(acc, item) {
+          if (acc[item.value]) {
+            acc[item.value] += 1;
+          } else {
+            acc[item.value] = 1;
+          }
+
+          return acc;
+        }, {});
+        this.setState({ votes });
       });
   }
 
@@ -33,8 +49,35 @@ class App extends React.Component {
     }
   }
 
-  handleVote(bloggerId) {}
-  handleReset() {}
+  handleVote(bloggerId) {
+    const txData = {
+      type: 16,
+      data: {
+        fee: {
+          tokens: "0.05",
+          assetId: "WAVES"
+        },
+        dApp: "3NCNoPsUGinvErayNYFzNfDYSbDA8gFzA3d",
+        call: {
+          function: "vote",
+          args: [
+            {
+              type: "string",
+              value: bloggerId
+            }
+          ]
+        },
+        payment: []
+      }
+    };
+    window.WavesKeeper.signAndPublishTransaction(txData)
+      .then(data => {
+        console.log(data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
 
   render() {
     return (
@@ -76,6 +119,7 @@ class App extends React.Component {
                   <a href={`https://www.youtube.com/channel/${blogger.id}`}>
                     {blogger.snippet.title}
                   </a>
+                  — {this.state.votes[blogger.id]}
                 </h5>
                 <input
                   className="btn btn-light"
