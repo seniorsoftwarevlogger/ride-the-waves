@@ -1,5 +1,7 @@
 # Голосование на блокчейне Waves
 
+Писали всем миром на стриме: https://www.youtube.com/watch?v=B4NiWJQgVJU
+
 Смарт контракт:
 
 ```
