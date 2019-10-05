@@ -9,7 +9,7 @@
 {-# CONTENT_TYPE DAPP #-}
 {-# SCRIPT_TYPE ACCOUNT #-}
 
-let owner = base58'<адрес вашего аккаунта>'
+let owner = base58'<публичный ключ вашего аккаунта>'
 
 @Callable(i)
 func vote(v: String) = {
